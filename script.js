@@ -75,3 +75,52 @@ const newPost = await createPost(
     1
 );
 console.log("Created:", newPost);
+
+let allUsers = [];
+
+async function init() {
+    allUsers = await fetchUsers();
+    displayUsers(allUsers);
+
+    const searchInput = document.getElementById("search");
+    searchInput.addEventListener("input", (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = allUsers.filter(user =>
+            user.name.toLowerCase().includes(query)
+        );
+
+    displayUsers(filtered);
+
+    });
+}
+
+const sortSelect =document.getElementById("sortSelect");
+sortSelect.addEventListener("change", (e) => {
+    const sorted = [...allUsers];
+
+    if (e.target.value === "az") {
+        sorted.sort((a, b) => b.name.localCampare(a.name));
+    }
+    displayUsers(sorted);
+});
+
+const cityFilter = document.getElementById("cityFilter");
+const cities = [...newSet(allUsers.map(user => user.address.city))];
+cities.forEach(city => {
+    const option = document.createElement("option");
+    option.value = city;
+    option.texContent = city;
+    cityFilter.appendChild(option);
+});
+
+cityFilter.addEventListener("change", (e) => {
+    const city = e.target.value;
+
+    if (city === "all") {
+        displayUsers(allUsers);
+
+    } else {
+        const filtered = allUsers.filter(user => user.address.city === city);
+        displayUsers(filtered);
+    }
+});
